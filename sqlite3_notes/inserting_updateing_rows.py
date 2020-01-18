@@ -18,7 +18,7 @@ c = conn.cursor()
 # inserts an id with a specific value in a second column
 
 try:
-
+	#inserts a row with a specific value
 	c.execute("INSERT INTO {tn} ({idf}, {cn}) VALUES (123456, 'test')".format(tn=table_name, idf=id_column, cn=column_name))
 
 except sqlite3.IntegrityError:
