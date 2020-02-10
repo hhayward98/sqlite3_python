@@ -1,23 +1,33 @@
 import sqlite3
 import db
 from db import *
+import csv
 
 
 def WIFI():
 
 	ESSID_list = []
 	network_list = []
-
-	file = open('wifi_info.txt', 'r')
+	start = 0
+	end = 1
+	file = open('wifi_info-01.log.csv', 'r')
+	line = file.readline()
+	BSSID_list = []
 	for line in file:
-		line.strip()
-		ESSID = line[:30]
-		ESSID_list.append(ESSID)
-	ESSID_list.remove(ESSID_list[0])
+		data = line.split(',')
+		BSSID = data[3]
+		if BSSID not in BSSID_list:
+			BSSID_list.append(BSSID)
 
-	for i in ESSID_list:
-		c.execute('INSERT INTO WIFI_info (ESSID) VALUES("{sd}")'.format(sd=i))
+	for i in BSSID_list:
+		c.execute('INSERT or IGNORE INTO WIFI_info (BSSID) VALUES("{sd}")'.format(sd=i))
 		
+
+	
+	conn.commit()
+
+# make the database only add unique BSSID
+
 
 	# c.execute('SELECT * FROM WIFI_info')
 
@@ -31,28 +41,22 @@ def WIFI():
 def BLUEtooth():
 
 	MAC_list = []
-	Name_list = []
 
 	file = open('bluetooth_info.txt')
 	for line in file:
 		MAC = line[:18]
-		MAC.strip()
+		MAC.strip(" ")
 		MAC_list.append(MAC)
 
-		Name = line[20:50]
-		Name_list.append(Name)
 
 
 	MAC_list.remove(MAC_list[0])
 
 	for i in MAC_list:
-		c.execute('INSERT INTO Bluetooth_info (MAC_Adress) VALUES("{num}")'.format(num=i))
-
-	for i in Name_list:
-		c.execute('INSERT INTO Bluetooth_info (Name) VALUES("{nm}")'.format(nm=i))
+		c.execute('INSERT or IGNORE INTO Bluetooth_info (MAC_Adress) VALUES("{num}")'.format(num=i))
 
 
-
+	conn.commit()
 	
 	# c.execute('SELECT * FROM Bluetooth_info')
 
@@ -63,9 +67,11 @@ def BLUEtooth():
 	
 
 		
-	
+
 
 WIFI()
 BLUEtooth()
+
+conn.close()
 
 
